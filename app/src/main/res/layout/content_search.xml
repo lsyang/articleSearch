@@ -15,12 +15,9 @@
     tools:context="com.codepath.nytimessearch.activities.SearchActivity">
 
 
-    <GridView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/gvResults"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:numColumns="2"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

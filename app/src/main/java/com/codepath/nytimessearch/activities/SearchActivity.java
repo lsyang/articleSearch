@@ -1,25 +1,23 @@
 package com.codepath.nytimessearch.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.codepath.nytimessearch.Article;
-import com.codepath.nytimessearch.ArticleArrayAdapter;
-import com.codepath.nytimessearch.EndlessScrollListener;
+import com.codepath.nytimessearch.ArticleAdapter;
+import com.codepath.nytimessearch.EndlessRecyclerViewScrollListener;
 import com.codepath.nytimessearch.FilterFragment;
 import com.codepath.nytimessearch.FilterFragment.FilterDialogListener;
 import com.codepath.nytimessearch.R;
@@ -40,11 +38,12 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements FilterDialogListener {
 
-    GridView gvResults;
+    RecyclerView gvResults;
     ArrayList<Article> articles;
-    ArticleArrayAdapter adapter;
+    ArticleAdapter adapter;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
-    String query;
+    String query = "";
     int year = 2016;
     int month = 1;
     int day = 1;
@@ -57,43 +56,58 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setUpViews();
-        setUpScrolling();
+        //setUpScrolling();
 
     }
 
     public void setUpViews() {
-        gvResults = (GridView) findViewById(R.id.gvResults);
+        gvResults = (RecyclerView) findViewById(R.id.gvResults);
         articles = new ArrayList<Article>();
-        adapter = new ArticleArrayAdapter(this, articles);
+        adapter = new ArticleAdapter(this, articles);
         gvResults.setAdapter(adapter);
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        gvResults.setLayoutManager(gridLayoutManager);
 
-        // hoook up listner
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // create an intent ti display article
-                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                // get article to display
-                Article article = articles.get(position);
-                // pass in that article intent
-                i.putExtra("article", article);
-                startActivity(i);
-            }
-        });
-    }
-
-    private void setUpScrolling() {
-        gvResults.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to your AdapterView
+                // Add whatever code is needed to append new items to the bottom of the list
                 loadNextDataFromApi(page);
-                // or loadNextDataFromApi(totalItemsCount);
-                return true; // ONLY if more data is actually being loaded; false otherwise.
             }
-        });
+        };
+        // Adds the scroll listener to RecyclerView
+        gvResults.addOnScrollListener(scrollListener);
+
+//        // hoook up listner
+//        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                // create an intent ti display article
+//                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+//                // get article to display
+//                Article article = articles.get(position);
+//                // pass in that article intent
+//                i.putExtra("article", article);
+//                startActivity(i);
+//            }
+//        });
     }
+
+
+//    private void setUpScrolling() {
+//        gvResults.setOnScrollListener(new EndlessScrollListener() {
+//            @Override
+//            public boolean onLoadMore(int page, int totalItemsCount) {
+//                // Triggered only when new data needs to be appended to the list
+//                // Add whatever code is needed to append new items to your AdapterView
+//                loadNextDataFromApi(page);
+//                // or loadNextDataFromApi(totalItemsCount);
+//                return true; // ONLY if more data is actually being loaded; false otherwise.
+//            }
+//        });
+//    }
 
 
     @Override
@@ -159,10 +173,21 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
     }
 
     public void onArtcileSearch(String query, int page) {
+
         if (!isOnline()) {
             Toast toast = Toast.makeText(getApplicationContext(), "Error: Network is unavaliable, please try again later", Toast.LENGTH_SHORT);
             toast.show();
             return;
+        }
+
+        if (!this.query.equals(query)) {
+            Log.d("DEBUG", "onArtcileSearch: ");
+            // 1. First, clear the array of data
+            articles.clear();
+            // 2. Notify the adapter of the update
+            adapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+            // 3. Reset endless scroll listener when performing a new search
+            scrollListener.resetState();
         }
 
         this.query = query;
@@ -187,8 +212,9 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
                 JSONArray articleJsonResults = null;
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJsonArray(articleJsonResults));
-                    Log.d("success", "onSuccess: " + articles);
+                    articles.addAll(Article.fromJsonArray(articleJsonResults));
+                    adapter.notifyDataSetChanged();
+                    Log.d("DEBUG", "onSuccess: " + articles);
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
