@@ -15,9 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.codepath.nytimessearch.Article;
 import com.codepath.nytimessearch.ArticleArrayAdapter;
+import com.codepath.nytimessearch.EndlessScrollListener;
 import com.codepath.nytimessearch.FilterFragment;
 import com.codepath.nytimessearch.FilterFragment.FilterDialogListener;
 import com.codepath.nytimessearch.R;
@@ -29,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +44,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
 
+    String query;
     int year = 2016;
     int month = 1;
     int day = 1;
@@ -53,6 +57,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setUpViews();
+        setUpScrolling();
 
     }
 
@@ -73,6 +78,19 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
                 // pass in that article intent
                 i.putExtra("article", article);
                 startActivity(i);
+            }
+        });
+    }
+
+    private void setUpScrolling() {
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                loadNextDataFromApi(page);
+                // or loadNextDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
             }
         });
     }
@@ -109,7 +127,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                onArtcileSearch(query);
+                onArtcileSearch(query, 0);
                 searchView.clearFocus();
                 return true;
             }
@@ -123,8 +141,31 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void onArtcileSearch(String query) {
-        query = "android";
+
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        return false;
+    }
+
+    public void loadNextDataFromApi (int page) {
+        onArtcileSearch(query, page);
+    }
+
+    public void onArtcileSearch(String query, int page) {
+        if (!isOnline()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Error: Network is unavaliable, please try again later", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        this.query = query;
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -136,7 +177,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         RequestParams params = new RequestParams();
         params.put("api-key", "e66de07ef7534c4696080e6d4c75413a");
         params.put("q", query);
-        params.put("page", 0);
+        params.put("page", page);
 //        params.put("begin_date", beginDate);
 //        params.put("sort", sort);
 
@@ -156,6 +197,8 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                     JSONObject errorResponse) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Error: " + errorResponse, Toast.LENGTH_SHORT);
+                toast.show();
                 Log.d("DEBUG", "onFailure: " + errorResponse);
             }
         });

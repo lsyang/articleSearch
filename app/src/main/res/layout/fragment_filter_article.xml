@@ -1,37 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin">
-
-    <TextView
-        android:text="Begin Date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:id="@+id/txt_beginDate"/>
-
-    <Button
-        android:text="Select Begin Date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:id="@+id/edit_date"
-        android:layout_below="@+id/txt_beginDate"
-        android:layout_centerHorizontal="true"/>
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/txt_sortOrder"/>
 
     <TextView
         android:text="News Desk Values"
@@ -57,7 +32,8 @@
         android:id="@+id/cb_sports"
         android:layout_below="@+id/cb_fasionStyle"
         android:layout_alignLeft="@+id/cb_fasionStyle"
-        android:layout_alignStart="@+id/cb_fasionStyle"/>
+        android:layout_alignStart="@+id/cb_fasionStyle"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:text="Save"
@@ -68,17 +44,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
-    <TextView
-        android:text="Sort Order"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/lbl_sortOrder"
-        android:layout_marginBottom="20dp"
-        android:layout_above="@+id/txt_sortOrder"
-        android:layout_alignRight="@+id/txt_beginDate"
-        android:layout_alignEnd="@+id/txt_beginDate"/>
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"/>
 
     <CheckBox
         android:text="Arts"
@@ -88,49 +55,41 @@
         android:id="@+id/cb_art"
         android:layout_below="@+id/textView4"
         android:layout_alignLeft="@+id/cb_fasionStyle"
-        android:layout_alignStart="@+id/cb_fasionStyle"/>
+        android:layout_alignStart="@+id/cb_fasionStyle"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:text="Sort Order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lbl_sortOrder"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/edit_date"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:text="Begin Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:id="@+id/txt_beginDate"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:text="Select Begin Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:id="@+id/edit_date"
+        android:layout_below="@+id/txt_beginDate"
+        android:layout_centerHorizontal="true"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:id="@+id/txt_sortOrder"
+        android:layout_below="@+id/lbl_sortOrder"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
-
-
-<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-
-    <!--<TableLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:stretchColumns="1"-->
-        <!--android:padding="10dip">-->
-
-
-        <!--<TableRow android:paddingBottom="50dip">-->
-            <!--<TextView-->
-                <!--android:text="Due Date 2/17/17 "-->
-                <!--android:id="@+id/txt_due_date"-->
-                <!--android:layout_weight="0.06"/>-->
-            <!--<Button-->
-                <!--android:text="Change due date"-->
-                <!--android:id="@+id/edit_date"/>-->
-        <!--</TableRow>-->
-
-        <!--<TableRow android:paddingBottom="50dip">-->
-            <!--<TextView-->
-                <!--android:id="@+id/lbl_pirority"-->
-                <!--android:text="Priority"/>-->
-
-            <!--<Spinner-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/txt_priority"/>-->
-        <!--</TableRow>-->
-
-    <!--</TableLayout>-->
-
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Save"-->
-        <!--android:id="@+id/edit_save"-->
-        <!--android:padding="30dip"/>-->
-<!--</ScrollView>-->
