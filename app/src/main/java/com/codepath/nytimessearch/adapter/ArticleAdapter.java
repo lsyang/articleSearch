@@ -1,4 +1,4 @@
-package com.codepath.nytimessearch;
+package com.codepath.nytimessearch.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.nytimessearch.R;
 import com.codepath.nytimessearch.activities.ArticleActivity;
+import com.codepath.nytimessearch.model.Article;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -108,7 +110,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         imageView.setImageResource(0);
         String thumbnail = article.getThumbnail();
         if (!TextUtils.isEmpty(thumbnail)) {
-            Picasso.with(getContext()).load(thumbnail).into(imageView);
+            Picasso.with(getContext()).load(thumbnail).fit().centerCrop().into(imageView);
         } else {
             imageView.setVisibility(GONE);
         }

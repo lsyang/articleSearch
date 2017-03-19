@@ -15,11 +15,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.codepath.nytimessearch.Article;
-import com.codepath.nytimessearch.ArticleAdapter;
-import com.codepath.nytimessearch.EndlessRecyclerViewScrollListener;
-import com.codepath.nytimessearch.FilterFragment;
-import com.codepath.nytimessearch.FilterFragment.FilterDialogListener;
+import com.codepath.nytimessearch.model.Article;
+import com.codepath.nytimessearch.adapter.ArticleAdapter;
+import com.codepath.nytimessearch.listener.EndlessRecyclerViewScrollListener;
+import com.codepath.nytimessearch.fragment.FilterFragment;
+import com.codepath.nytimessearch.fragment.FilterFragment.FilterDialogListener;
 import com.codepath.nytimessearch.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -79,35 +79,7 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         };
         // Adds the scroll listener to RecyclerView
         gvResults.addOnScrollListener(scrollListener);
-
-//        // hoook up listner
-//        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                // create an intent ti display article
-//                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-//                // get article to display
-//                Article article = articles.get(position);
-//                // pass in that article intent
-//                i.putExtra("article", article);
-//                startActivity(i);
-//            }
-//        });
     }
-
-
-//    private void setUpScrolling() {
-//        gvResults.setOnScrollListener(new EndlessScrollListener() {
-//            @Override
-//            public boolean onLoadMore(int page, int totalItemsCount) {
-//                // Triggered only when new data needs to be appended to the list
-//                // Add whatever code is needed to append new items to your AdapterView
-//                loadNextDataFromApi(page);
-//                // or loadNextDataFromApi(totalItemsCount);
-//                return true; // ONLY if more data is actually being loaded; false otherwise.
-//            }
-//        });
-//    }
 
 
     @Override
@@ -196,15 +168,15 @@ public class SearchActivity extends AppCompatActivity implements FilterDialogLis
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 
         SimpleDateFormat outputFmt = new SimpleDateFormat("yyyyMMdd");
-        String beginDate = "Begin Date: " + outputFmt.format(new Date(year - 1900, month, day));
+        String beginDate = outputFmt.format(new Date(year - 1900, month, day));
         String sort = getResources().getStringArray(R.array.sort_order)[sortOrder];
 
         RequestParams params = new RequestParams();
         params.put("api-key", "e66de07ef7534c4696080e6d4c75413a");
         params.put("q", query);
         params.put("page", page);
-//        params.put("begin_date", beginDate);
-//        params.put("sort", sort);
+        params.put("begin_date", beginDate);
+        params.put("sort", sort);
 
         client.get(url, params, new JsonHttpResponseHandler() {
             @Override

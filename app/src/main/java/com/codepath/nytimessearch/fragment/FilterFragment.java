@@ -1,4 +1,4 @@
-package com.codepath.nytimessearch;
+package com.codepath.nytimessearch.fragment;
 
 /**
  * Created by lsyang on 3/18/17.
@@ -22,6 +22,8 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.codepath.nytimessearch.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,7 +35,6 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     private Button saveBtn;
     private Button changeDateBtn;
 
-    private boolean isNew;
     private int year;
     private int month;
     private int day;
